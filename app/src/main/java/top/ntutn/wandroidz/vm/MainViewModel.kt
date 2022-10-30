@@ -24,25 +24,36 @@ class MainViewModel: ViewModel() {
 
     private var currentPage = 0
 
-    fun init() {
-        loadMore()
+    fun refresh() {
+        viewModelScope.launch {
+            currentPage = 0
+            val result = load()
+            _datas.value = result
+            currentPage++
+        }
     }
 
     fun loadMore() {
+        viewModelScope.launch {
+            val result = load().toMutableList()
+            result.addAll(0, datas.value)
+            _datas.value = result
+            currentPage++
+        }
+    }
+
+    private suspend fun load(): List<RecommendDataModel> {
         if (currentState.value != State.IDLE) {
-            return
+            return emptyList() // fixme move to caller
         }
         _currentState.value = State.LOADING
-
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                HomePageApi.get().getRecommendList(currentPage)
-            }
-            if (result.errorCode == 0) {
-                val list = result.data.datas.toMutableList()
-                list.addAll(0, _datas.value)
-                _datas.value = list
-            }
+        val result = withContext(Dispatchers.IO) {
+            HomePageApi.get().getRecommendList(currentPage)
         }
+        _currentState.value = State.IDLE
+        if (result.errorCode == 0) {
+            return result.data.datas
+        }
+        return emptyList()
     }
 }

@@ -29,15 +29,22 @@ class MainActivity : AppCompatActivity() {
     private fun bindView() {
         binding.mainList.adapter = adapter
         binding.mainList.layoutManager = LinearLayoutManager(this)
+
+        binding.refreshLayout.setOnRefreshListener {
+            mainViewModel.refresh()
+        }
     }
 
     private fun observeModel() {
+        mainViewModel.currentState.onEach {
+            binding.refreshLayout.isRefreshing = it == MainViewModel.State.LOADING
+        }.launchIn(lifecycleScope)
         mainViewModel.datas.onEach {
             adapter.submitList(it)
         }.launchIn(lifecycleScope)
     }
 
     private fun initData() {
-        mainViewModel.init()
+        mainViewModel.refresh()
     }
 }
