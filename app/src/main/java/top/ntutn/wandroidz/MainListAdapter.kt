@@ -1,14 +1,11 @@
 package top.ntutn.wandroidz
 
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import top.ntutn.wandroidz.model.RecommendDataModel
 
 class MainListAdapter(private val loadMoreListener: ()-> Unit): ListAdapter<IMainListItem, MainListAdapter.ViewHolder>(IMainListItem.DiffCallback()) {
     enum class Type {
@@ -38,8 +35,9 @@ class MainListAdapter(private val loadMoreListener: ()-> Unit): ListAdapter<IMai
                 view.text = data.data.title
                 view.setOnClickListener {
                     kotlin.runCatching {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(data.data.link))
-                        it.context.startActivity(intent)
+//                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(data.data.link))
+//                        it.context.startActivity(intent)
+                        data.data.link?.let { it1 -> WebViewActivity.actionStart(it.context, it1) }
                     }.onFailure {
                         Toast.makeText(view.context, "打开链接失败", Toast.LENGTH_SHORT).show()
                     }
