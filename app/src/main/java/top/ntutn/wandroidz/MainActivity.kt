@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel by viewModels<MainViewModel>()
     private lateinit var binding: ActivityMainBinding
     private val adapter by lazy {
-        MainListAdapter()
+        MainListAdapter(mainViewModel::loadMore)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
