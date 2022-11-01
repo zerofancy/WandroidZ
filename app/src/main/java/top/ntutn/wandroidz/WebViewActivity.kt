@@ -20,7 +20,7 @@ import top.ntutn.wandroidz.smartavatar.JuejinSniffer
 class WebViewActivity: AppCompatActivity() {
     companion object {
         private const val KEY_URL = "key_url"
-        private const val KEY_SHARE_USER = "key_share_user"
+        private const val KEY_AUTHOR = "key_author"
 
         fun actionStart(context: Context, url: String) {
             val intent = Intent(context, WebViewActivity::class.java)
@@ -28,16 +28,16 @@ class WebViewActivity: AppCompatActivity() {
             context.startActivity(intent)
         }
 
-        fun showArticle(context: Context, shareUser: String?, url: String) {
+        fun showArticle(context: Context, author: String?, url: String) {
             val intent = Intent(context, WebViewActivity::class.java)
             intent.putExtra(KEY_URL, url)
-            intent.putExtra(KEY_SHARE_USER, shareUser)
+            intent.putExtra(KEY_AUTHOR, author)
             context.startActivity(intent)
         }
     }
 
     private lateinit var webView: WebView
-    private var shareUser: String? = null
+    private var author: String? = null
     private val sniffer by lazy {
         JuejinSniffer(null)
     }
@@ -48,14 +48,14 @@ class WebViewActivity: AppCompatActivity() {
         webView = WebView(this)
         setContentView(webView)
 
-        shareUser = intent.getStringExtra(KEY_SHARE_USER)
+        author = intent.getStringExtra(KEY_AUTHOR)
         val linkUrl = intent?.extras?.getString(KEY_URL)
 
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 Timber.d("页面 %s 加载完成", url)
-                val user = shareUser ?: return
+                val user = author ?: return
                 if (user.isBlank()) {
                     return
                 }
@@ -65,7 +65,6 @@ class WebViewActivity: AppCompatActivity() {
                 // 查找页面加载头像
 
                 view?.evaluateJavascript("new XMLSerializer().serializeToString(document)") {
-                    // todo 寻找头像
                     lifecycleScope.launch(Dispatchers.Default) {
                         val html = StringEscapeUtils.unescapeJava(it)
                         val avatarUrl = sniffer.sniff(url, html)
@@ -76,7 +75,7 @@ class WebViewActivity: AppCompatActivity() {
                     }
                 } ?: return
 
-                shareUser = null
+                author = null
             }
         }
         webView.settings.apply {

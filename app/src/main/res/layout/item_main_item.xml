@@ -34,7 +34,7 @@
             tools:text="Gson源码分析指南"/>
 
         <TextView
-            android:id="@+id/shareUser"
+            android:id="@+id/author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="分享人：彭旭锐"

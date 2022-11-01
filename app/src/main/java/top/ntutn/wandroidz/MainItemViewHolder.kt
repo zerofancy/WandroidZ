@@ -12,15 +12,19 @@ class MainItemViewHolder(private val binding: ItemMainItemBinding): MainListAdap
         super.onBind(position, data)
         val data = (data as IMainListItem.NormalItem).data
         binding.title.text = HtmlCompat.fromHtml(data.title, HtmlCompat.FROM_HTML_MODE_COMPACT)
-        binding.shareUser.text = "分享人：${data.shareUser}"
+        data.author?.takeIf { it.isNotBlank() }?.run {
+            binding.author.text = "作者：$this"
+        }?: data.shareUser.run {
+            binding.author.text = "分享人：$this"
+        }
         binding.root.setOnClickListener {
             kotlin.runCatching {
-                WebViewActivity.showArticle(it.context, data.shareUser, data.link)
+                WebViewActivity.showArticle(it.context, data.author?.takeIf { it.isNotBlank() } ?: data.shareUser, data.link)
             }.onFailure {
                 Toast.makeText(binding.root.context, "打开链接失败", Toast.LENGTH_SHORT).show()
             }
         }
-        val url = AvatarHelper.getAvatarUrl(data.shareUser, data.link)
+        val url = AvatarHelper.getAvatarUrl(data.author?.takeIf { it.isNotBlank() } ?: data.shareUser, data.link)
         Glide.with(binding.icon)
             .load(url)
             .fallback(R.mipmap.ic_launcher)
