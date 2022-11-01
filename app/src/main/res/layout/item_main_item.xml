@@ -8,13 +8,26 @@
     android:layout_marginEnd="8dp"
     android:layout_marginTop="8dp"
     app:cardCornerRadius="8dp">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            tools:background="@tools:sample/backgrounds/scenic"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:importantForAccessibility="no"/>
+
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            app:layout_constraintStart_toEndOf="@id/icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             tools:textSize="20sp"
