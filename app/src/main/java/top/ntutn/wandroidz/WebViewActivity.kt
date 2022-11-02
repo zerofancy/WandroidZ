@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
@@ -50,6 +52,8 @@ class WebViewActivity: AppCompatActivity() {
         binding = ActivityWebviewBinding.inflate(layoutInflater)
         webView = binding.webview
         setContentView(binding.root)
+
+        setSupportActionBar(binding.myToolbar)
 
         author = intent.getStringExtra(KEY_AUTHOR)
         val linkUrl = intent?.extras?.getString(KEY_URL)
@@ -101,18 +105,22 @@ class WebViewActivity: AppCompatActivity() {
             }
         }
         onBackPressedDispatcher.addCallback(webViewBackPressedCallback)
+    }
 
-        binding.myToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.action_share -> {
-                    val shareIntent = Intent(Intent.ACTION_SEND)
-                    shareIntent.type = "text/plain"
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, binding.webview.url)
-                    startActivity(Intent.createChooser(shareIntent, "分享到..."))
-                    true
-                }
-                else -> false
-            }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_share -> {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, binding.webview.url)
+            startActivity(Intent.createChooser(shareIntent, "分享到..."))
+            true
         }
+        else -> false
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.webview_toolbar, menu)
+        return true
     }
 }

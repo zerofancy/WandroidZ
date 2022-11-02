@@ -11,7 +11,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        app:menu="@menu/webview_toolbar"
         app:title="loading..."
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
