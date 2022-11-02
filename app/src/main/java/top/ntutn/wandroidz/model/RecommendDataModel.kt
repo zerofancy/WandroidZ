@@ -8,5 +8,7 @@ data class RecommendDataModel(
     val title: String,
     val link: String,
     val author: String? = null,
-    val shareUser: String? = null
+    val shareUser: String? = null,
+    val publishTime: Long? = null,
+    val shareDate: Long? = null,
 )

@@ -5,6 +5,7 @@ import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import top.ntutn.wandroidz.databinding.ItemMainItemBinding
 import top.ntutn.wandroidz.smartavatar.AvatarHelper
+import top.ntutn.wandroidz.smartavatar.TimeUtil
 import top.ntutn.wandroidz.util.dp
 
 class MainItemViewHolder(private val binding: ItemMainItemBinding): MainListAdapter.ViewHolder(binding.root) {
@@ -14,8 +15,17 @@ class MainItemViewHolder(private val binding: ItemMainItemBinding): MainListAdap
         binding.title.text = HtmlCompat.fromHtml(data.title, HtmlCompat.FROM_HTML_MODE_COMPACT)
         data.author?.takeIf { it.isNotBlank() }?.run {
             binding.author.text = "作者：$this"
-        }?: data.shareUser.run {
+        }?: data.shareUser?.run {
             binding.author.text = "分享人：$this"
+        }?: kotlin.run {
+            binding.author.text = ""
+        }
+        data.publishTime?.let {
+            binding.time.text = TimeUtil.getUserFriendlyTime(it)
+        }?: data.shareDate?.let {
+            binding.time.text = TimeUtil.getUserFriendlyTime(it)
+        }?: kotlin.run {
+            binding.time.text = ""
         }
         binding.root.setOnClickListener {
             kotlin.runCatching {
