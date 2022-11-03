@@ -7,13 +7,7 @@ import top.ntutn.wandroidz.databinding.ItemMainBannerBinding
 class BannerViewHolder(private val binding: ItemMainBannerBinding): MainListAdapter.ViewHolder(binding.root) {
     override fun onBind(position: Int, data: IMainListItem) {
         super.onBind(position, data as IMainListItem.BannerItem)
-        if (data.data.isEmpty()) {
-            binding.image.background = null
-            binding.root.setOnClickListener(null)
-            binding.root.isClickable = false
-            return
-        }
-        val item = data.data.random()
+        val item = data.data
         Glide.with(binding.image)
             .load(item.imagePath)
             .into(binding.image)

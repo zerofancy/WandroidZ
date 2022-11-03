@@ -33,9 +33,10 @@ class MainViewModel: ViewModel() {
 
             // load banner
             val result: MutableList<IMainListItem> = bannerDataSource.getBannerData()
-                .let { IMainListItem.BannerItem(it) }
-                .let { listOf(it) }
-                .toMutableList()
+                .takeIf { it.isNotEmpty() }
+                ?.let { IMainListItem.BannerItem(it.random()) }
+                ?.let { listOf(it) }
+                ?.toMutableList() ?: mutableListOf()
 
             // load content
             currentPage = 0
