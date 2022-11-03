@@ -6,6 +6,7 @@ import okhttp3.MediaType
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Path
+import top.ntutn.wandroidz.model.BannerDataModel
 import top.ntutn.wandroidz.model.DataWrapperModel
 import top.ntutn.wandroidz.model.PagingDataModel
 import top.ntutn.wandroidz.model.RecommendDataModel
@@ -30,4 +31,10 @@ interface HomePageApi {
      */
     @GET("article/list/{page}/json")
     suspend fun getRecommendList(@Path("page") page: Int): DataWrapperModel<PagingDataModel<RecommendDataModel>>
+
+    /**
+     * 获取banner数据
+     */
+    @GET("banner/json")
+    suspend fun getBanner(): DataWrapperModel<List<BannerDataModel>>
 }

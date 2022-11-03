@@ -1,10 +1,12 @@
-package top.ntutn.wandroidz
+package top.ntutn.wandroidz.mainpage
 
 import androidx.recyclerview.widget.DiffUtil
+import top.ntutn.wandroidz.model.BannerDataModel
 import top.ntutn.wandroidz.model.RecommendDataModel
 
 interface IMainListItem {
     data class NormalItem(val data: RecommendDataModel): IMainListItem
+    class BannerItem(val data: List<BannerDataModel>): IMainListItem
     class FooterItem(): IMainListItem
 
     class DiffCallback: DiffUtil.ItemCallback<IMainListItem>() {

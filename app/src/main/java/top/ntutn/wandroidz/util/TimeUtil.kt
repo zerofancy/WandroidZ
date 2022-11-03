@@ -1,4 +1,4 @@
-package top.ntutn.wandroidz.smartavatar
+package top.ntutn.wandroidz.util
 
 import java.text.SimpleDateFormat
 

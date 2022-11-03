@@ -1,4 +1,4 @@
-package top.ntutn.wandroidz
+package top.ntutn.wandroidz.util
 
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool

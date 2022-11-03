@@ -2,20 +2,22 @@ package top.ntutn.wandroidz.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import top.ntutn.wandroidz.IMainListItem
-import top.ntutn.wandroidz.api.HomePageApi
-import top.ntutn.wandroidz.model.RecommendDataModel
+import top.ntutn.wandroidz.mainpage.IMainListItem
+import top.ntutn.wandroidz.mainpage.BannerDataSource
+import top.ntutn.wandroidz.mainpage.RecommendDataSource
 
 class MainViewModel: ViewModel() {
     enum class State {
+        REFRESHING,
         IDLE,
         LOADING
     }
+
+    private val bannerDataSource = BannerDataSource()
+    private val recommendDataSource = RecommendDataSource()
 
     private val _currentState = MutableStateFlow(State.IDLE)
     val currentState: StateFlow<State> get() = _currentState
@@ -27,37 +29,40 @@ class MainViewModel: ViewModel() {
 
     fun refresh() {
         viewModelScope.launch {
+            _currentState.value = State.REFRESHING
+
+            // load banner
+            val result: MutableList<IMainListItem> = bannerDataSource.getBannerData()
+                .let { IMainListItem.BannerItem(it) }
+                .let { listOf(it) }
+                .toMutableList()
+
+            // load content
             currentPage = 0
-            val result: MutableList<IMainListItem> = load().map { IMainListItem.NormalItem(it) }.toMutableList()
             result.add(IMainListItem.FooterItem())
             _datas.value = result
-            currentPage++
+
+            _currentState.value = State.IDLE
         }
     }
 
     fun loadMore() {
+        if (currentState.value != State.IDLE) {
+            return
+        }
         viewModelScope.launch {
-            val originList = datas.value.filter { it !is IMainListItem.FooterItem }.toMutableList()
-            val result = load().toMutableList().map { IMainListItem.NormalItem(it) }
-            originList.addAll(result)
+            _currentState.value = State.LOADING
+
+            val loaded = recommendDataSource.load(currentPage++)
+                .map { IMainListItem.NormalItem(it) }
+            val originList = datas.value
+                .filter { it !is IMainListItem.FooterItem }
+                .toMutableList()
+            originList.addAll(originList.size, loaded)
             originList.add(IMainListItem.FooterItem())
             _datas.value = originList
-            currentPage++
-        }
-    }
 
-    private suspend fun load(): List<RecommendDataModel> {
-        if (currentState.value != State.IDLE) {
-            return emptyList() // fixme move to caller
+            _currentState.value = State.IDLE
         }
-        _currentState.value = State.LOADING
-        val result = withContext(Dispatchers.IO) {
-            HomePageApi.get().getRecommendList(currentPage)
-        }
-        _currentState.value = State.IDLE
-        if (result.errorCode == 0) {
-            return result.data.datas
-        }
-        return emptyList()
     }
 }
