@@ -2,7 +2,6 @@ package top.ntutn.wandroidz
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private val adapter by lazy {
         MainListAdapter(mainViewModel::loadMore)
     }
-    private var recyclerViewState: Parcelable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +41,11 @@ class MainActivity : AppCompatActivity() {
             binding.refreshLayout.isRefreshing = it in listOf(MainViewModel.State.LOADING, MainViewModel.State.REFRESHING)
         }.launchIn(lifecycleScope)
         mainViewModel.datas.onEach {
-            recyclerViewState = binding.mainList.layoutManager?.onSaveInstanceState()
+            val recyclerViewState = binding.mainList.layoutManager?.onSaveInstanceState()
             adapter.submitList(it) {
                 lifecycleScope.launchWhenResumed {
                     recyclerViewState?.let {
                         binding.mainList.layoutManager?.onRestoreInstanceState(it)
-                        recyclerViewState = null
                     }
                 }
             }
