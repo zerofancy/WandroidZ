@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import top.ntutn.wandroidz.databinding.FragmentRecommendBinding
@@ -49,6 +52,17 @@ class RecommendFragment: Fragment() {
         binding.refreshLayout.setOnRefreshListener {
             recommendViewModel.refresh()
         }
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                lifecycleScope.launchWhenResumed {
+                    isEnabled = false
+                    Toast.makeText(requireContext(), "再次返回以退出应用", Toast.LENGTH_SHORT).show()
+                    delay(1000L)
+                    isEnabled = true
+                }
+            }
+        })
     }
 
     private fun observeModel() {
