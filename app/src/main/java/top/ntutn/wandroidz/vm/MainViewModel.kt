@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import top.ntutn.wandroidz.mainpage.IMainListItem
 import top.ntutn.wandroidz.mainpage.BannerDataSource
 import top.ntutn.wandroidz.mainpage.RecommendDataSource
+import top.ntutn.wandroidz.mainpage.TopArticleDataSource
 
 class MainViewModel: ViewModel() {
     enum class State {
@@ -17,6 +18,7 @@ class MainViewModel: ViewModel() {
     }
 
     private val bannerDataSource = BannerDataSource()
+    private val topArticleDataSource = TopArticleDataSource()
     private val recommendDataSource = RecommendDataSource()
 
     private val _currentState = MutableStateFlow(State.IDLE)
@@ -40,8 +42,14 @@ class MainViewModel: ViewModel() {
 
             // load content
             currentPage = 0
+            _datas.value = result.toMutableList()
+
+            // load top article
+            val topArticle = topArticleDataSource.load()
+                .map { IMainListItem.ArticleItem(data = it, isTop = true) }
+            result.addAll(topArticle)
             result.add(IMainListItem.FooterItem())
-            _datas.value = result
+            _datas.value = result.toMutableList()
 
             _currentState.value = State.IDLE
         }
@@ -55,13 +63,13 @@ class MainViewModel: ViewModel() {
             _currentState.value = State.LOADING
 
             val loaded = recommendDataSource.load(currentPage++)
-                .map { IMainListItem.NormalItem(it) }
+                .map { IMainListItem.ArticleItem(it) }
             val originList = datas.value
                 .filter { it !is IMainListItem.FooterItem }
                 .toMutableList()
             originList.addAll(originList.size, loaded)
             originList.add(IMainListItem.FooterItem())
-            _datas.value = originList
+            _datas.value = originList.toMutableList()
 
             _currentState.value = State.IDLE
         }

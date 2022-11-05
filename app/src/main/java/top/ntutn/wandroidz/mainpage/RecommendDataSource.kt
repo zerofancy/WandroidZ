@@ -4,10 +4,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import top.ntutn.wandroidz.api.HomePageApi
-import top.ntutn.wandroidz.model.RecommendDataModel
+import top.ntutn.wandroidz.model.ArticleDataModel
 
 class RecommendDataSource {
-    suspend fun load(currentPage: Int): List<RecommendDataModel> = withContext(Dispatchers.IO) {
+    suspend fun load(currentPage: Int): List<ArticleDataModel> = withContext(Dispatchers.IO) {
         val result = kotlin.runCatching {
             HomePageApi.get().getRecommendList(currentPage)
         }.onFailure {

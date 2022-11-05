@@ -1,7 +1,6 @@
 package top.ntutn.wandroidz.util
 
 import android.content.res.Resources
-import android.graphics.Color
 
 val Int.dp: Int
     get() {
@@ -26,7 +25,3 @@ val Float.spFloat: Float
         val dpValue = this
         return dpValue * Resources.getSystem().displayMetrics.scaledDensity
     }
-
-
-val String.color: Int get() = Color.parseColor(this)
-

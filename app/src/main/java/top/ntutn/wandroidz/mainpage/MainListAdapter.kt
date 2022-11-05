@@ -62,7 +62,7 @@ class MainListAdapter(private val loadMoreListener: ()-> Unit): ListAdapter<IMai
     }
 
     override fun getItemViewType(position: Int) = when (getItem(position)) {
-            is IMainListItem.NormalItem -> Type.CONTENT.ordinal
+            is IMainListItem.ArticleItem -> Type.CONTENT.ordinal
             is IMainListItem.BannerItem -> Type.BANNER.ordinal
             is IMainListItem.FooterItem -> Type.FOOTER.ordinal
             else -> throw NotImplementedError()

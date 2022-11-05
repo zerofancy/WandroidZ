@@ -2,16 +2,16 @@ package top.ntutn.wandroidz.mainpage
 
 import androidx.recyclerview.widget.DiffUtil
 import top.ntutn.wandroidz.model.BannerDataModel
-import top.ntutn.wandroidz.model.RecommendDataModel
+import top.ntutn.wandroidz.model.ArticleDataModel
 
 interface IMainListItem {
-    data class NormalItem(val data: RecommendDataModel): IMainListItem
+    data class ArticleItem(val data: ArticleDataModel, val isTop: Boolean = false): IMainListItem
     class BannerItem(val data: BannerDataModel): IMainListItem
     class FooterItem(): IMainListItem
 
     class DiffCallback: DiffUtil.ItemCallback<IMainListItem>() {
         override fun areItemsTheSame(oldItem: IMainListItem, newItem: IMainListItem): Boolean {
-            if (oldItem is NormalItem && newItem is NormalItem) {
+            if (oldItem is ArticleItem && newItem is ArticleItem) {
                 return oldItem.data.id == newItem.data.id
             }
             if (oldItem.javaClass != newItem.javaClass) {
@@ -30,7 +30,7 @@ interface IMainListItem {
             if (oldItem is FooterItem && newItem is FooterItem) {
                 return true
             }
-            if (oldItem is NormalItem && newItem is NormalItem) {
+            if (oldItem is ArticleItem && newItem is ArticleItem) {
                 return oldItem.data == newItem.data
             }
             return false

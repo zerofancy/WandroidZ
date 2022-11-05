@@ -1,9 +1,12 @@
 package top.ntutn.wandroidz.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecommendDataModel(
+@Parcelize
+data class ArticleDataModel(
     val id: Long,
     val title: String,
     val link: String,
@@ -11,4 +14,4 @@ data class RecommendDataModel(
     val shareUser: String? = null,
     val publishTime: Long? = null,
     val shareDate: Long? = null,
-)
+): Parcelable

@@ -5,7 +5,7 @@ import com.tencent.mmkv.MMKV
 
 /**
  * 对于未记录过的作者，加载favicon
- * todo 对于记录过的作者，加载记录头像
+ * 对于记录过的作者，加载记录头像
  */
 object AvatarHelper {
     private val kv by lazy {
@@ -18,8 +18,13 @@ object AvatarHelper {
     }
 
     private fun getFaviconUrl(url: String): String {
-        return Uri.parse(url)
-            .buildUpon()
+        val uri = Uri.parse(url)
+        if (uri.host?.contains("wanandroid.com") == true) {
+            // 没错，WanAndroid是少数不把favicon放在根目录的网站
+            return "https://wanandroid.com/resources/image/favicon.ico"
+        }
+
+        return uri.buildUpon()
             .path("/favicon.ico")
             .build()
             .toString()

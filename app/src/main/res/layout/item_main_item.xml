@@ -10,8 +10,10 @@
     app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        tools:background="#33D2624A"
         android:padding="8dp">
         <ImageView
             android:id="@+id/icon"
