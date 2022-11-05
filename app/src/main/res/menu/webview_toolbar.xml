@@ -5,5 +5,5 @@
         android:id="@+id/action_share"
         android:icon="@drawable/ic_baseline_share_24"
         app:showAsAction="always"
-        android:title="分享" />
+        android:title="@string/share"/>
 </menu>

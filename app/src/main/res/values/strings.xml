@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WAndroidZ</string>
     <string name="no_more_content">到底了</string>
+    <string name="share">分享</string>
 </resources>
