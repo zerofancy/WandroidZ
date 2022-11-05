@@ -9,7 +9,7 @@ import top.ntutn.wandroidz.databinding.ItemMainBannerBinding
 import top.ntutn.wandroidz.databinding.ItemMainFooterBinding
 import top.ntutn.wandroidz.databinding.ItemMainItemBinding
 
-class MainListAdapter(private val loadMoreListener: ()-> Unit): ListAdapter<IMainListItem, MainListAdapter.ViewHolder>(
+class RecommendListAdapter(private val loadMoreListener: ()-> Unit): ListAdapter<IMainListItem, RecommendListAdapter.ViewHolder>(
     IMainListItem.DiffCallback()
 ) {
     enum class Type {

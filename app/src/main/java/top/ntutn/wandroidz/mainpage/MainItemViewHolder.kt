@@ -13,7 +13,7 @@ import top.ntutn.wandroidz.smartavatar.AvatarHelper
 import top.ntutn.wandroidz.util.TimeUtil
 import top.ntutn.wandroidz.util.dp
 
-class MainItemViewHolder(private val binding: ItemMainItemBinding): MainListAdapter.ViewHolder(binding.root) {
+class MainItemViewHolder(private val binding: ItemMainItemBinding): RecommendListAdapter.ViewHolder(binding.root) {
     override fun onBind(position: Int, item: IMainListItem) {
         super.onBind(position, item)
         val data = (item as IMainListItem.ArticleItem).data

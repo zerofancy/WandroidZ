@@ -10,7 +10,7 @@ import top.ntutn.wandroidz.mainpage.BannerDataSource
 import top.ntutn.wandroidz.mainpage.RecommendDataSource
 import top.ntutn.wandroidz.mainpage.TopArticleDataSource
 
-class MainViewModel: ViewModel() {
+class RecommendViewModel: ViewModel() {
     enum class State {
         REFRESHING,
         IDLE,
