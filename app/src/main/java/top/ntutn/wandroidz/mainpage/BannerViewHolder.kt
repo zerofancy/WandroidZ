@@ -1,7 +1,7 @@
 package top.ntutn.wandroidz.mainpage
 
 import com.bumptech.glide.Glide
-import top.ntutn.wandroidz.WebViewActivity
+import top.ntutn.wandroidz.web.WebViewActivity
 import top.ntutn.wandroidz.databinding.ItemMainBannerBinding
 
 class BannerViewHolder(private val binding: ItemMainBannerBinding): MainListAdapter.ViewHolder(binding.root) {

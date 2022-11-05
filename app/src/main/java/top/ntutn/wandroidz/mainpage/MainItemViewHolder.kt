@@ -7,7 +7,7 @@ import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import top.ntutn.wandroidz.R
 import top.ntutn.wandroidz.util.RoundedCornerCenterCrop
-import top.ntutn.wandroidz.WebViewActivity
+import top.ntutn.wandroidz.web.WebViewActivity
 import top.ntutn.wandroidz.databinding.ItemMainItemBinding
 import top.ntutn.wandroidz.smartavatar.AvatarHelper
 import top.ntutn.wandroidz.util.TimeUtil
@@ -48,7 +48,7 @@ class MainItemViewHolder(private val binding: ItemMainItemBinding): MainListAdap
         val url = AvatarHelper.getAvatarUrl(data.author?.takeIf { it.isNotBlank() } ?: data.shareUser, data.link)
         Glide.with(binding.icon)
             .load(url)
-            .fallback(R.mipmap.ic_launcher)
+            .error(R.mipmap.ic_launcher)
             .transform(RoundedCornerCenterCrop(4.dp))
             .into(binding.icon)
     }

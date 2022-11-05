@@ -30,7 +30,7 @@
                 android:value="" />
         </activity>
 
-        <activity android:name=".WebViewActivity"
+        <activity android:name=".web.WebViewActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
     </application>
 

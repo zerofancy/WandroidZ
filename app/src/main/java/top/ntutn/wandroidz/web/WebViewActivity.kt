@@ -1,4 +1,4 @@
-package top.ntutn.wandroidz
+package top.ntutn.wandroidz.web
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import timber.log.Timber
+import top.ntutn.wandroidz.R
 import top.ntutn.wandroidz.databinding.ActivityWebviewBinding
 import top.ntutn.wandroidz.smartavatar.AvatarHelper
 import top.ntutn.wandroidz.smartavatar.JuejinSniffer
@@ -45,10 +47,19 @@ class WebViewActivity: AppCompatActivity() {
     private val sniffer by lazy {
         JuejinSniffer(null)
     }
+    private val blocker = BuiltinURLBlocker()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val linkUrl = intent?.extras?.getString(KEY_URL)
+
+        if (blocker.check(linkUrl) != URLBlocker.Result.PASS) {
+            Toast.makeText(applicationContext, "请求地址被屏蔽", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         binding = ActivityWebviewBinding.inflate(layoutInflater)
         webView = binding.webview
         setContentView(binding.root)
@@ -56,7 +67,6 @@ class WebViewActivity: AppCompatActivity() {
         setSupportActionBar(binding.myToolbar)
 
         author = intent.getStringExtra(KEY_AUTHOR)
-        val linkUrl = intent?.extras?.getString(KEY_URL)
 
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
