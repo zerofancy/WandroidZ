@@ -1,55 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
     android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
     app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="#33D2624A"
-        android:padding="8dp">
+        android:padding="8dp"
+        tools:background="#33D2624A">
+
         <ImageView
             android:id="@+id/icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            tools:background="@tools:sample/backgrounds/scenic"
-            app:layout_constraintTop_toTopOf="parent"
+            android:importantForAccessibility="no"
             app:layout_constraintStart_toStartOf="parent"
-            android:importantForAccessibility="no"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@tools:sample/backgrounds/scenic" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
-            app:layout_constraintStart_toEndOf="@id/icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="8dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:textSize="20sp"
-            tools:text="Gson源码分析指南"/>
+            tools:text="Gson源码分析指南"
+            tools:textSize="20sp" />
 
         <TextView
             android:id="@+id/author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="分享人：彭旭锐"
+            app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintTop_toBottomOf="@id/title"
-            app:layout_constraintStart_toStartOf="@id/title" />
+            tools:text="分享人：彭旭锐" />
 
         <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/author"
+            android:layout_marginStart="8dp"
             app:layout_constraintStart_toEndOf="@id/author"
-            tools:text="1970年1月1日"
-            android:layout_marginStart="8dp"/>
+            app:layout_constraintTop_toTopOf="@id/author"
+            tools:text="1970年1月1日" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
