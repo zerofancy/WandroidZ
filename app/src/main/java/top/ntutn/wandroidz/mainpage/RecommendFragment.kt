@@ -24,6 +24,17 @@ class RecommendFragment: Fragment() {
         RecommendListAdapter(recommendViewModel::loadMore)
     }
 
+    private val doubleBackCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            lifecycleScope.launchWhenResumed {
+                isEnabled = false
+                Toast.makeText(requireContext(), "再次返回以退出应用", Toast.LENGTH_SHORT).show()
+                delay(1000L)
+                isEnabled = true
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,6 +51,16 @@ class RecommendFragment: Fragment() {
         initData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        doubleBackCallback.isEnabled = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        doubleBackCallback.isEnabled = false
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -53,16 +74,7 @@ class RecommendFragment: Fragment() {
             recommendViewModel.refresh()
         }
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                lifecycleScope.launchWhenResumed {
-                    isEnabled = false
-                    Toast.makeText(requireContext(), "再次返回以退出应用", Toast.LENGTH_SHORT).show()
-                    delay(1000L)
-                    isEnabled = true
-                }
-            }
-        })
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, doubleBackCallback)
     }
 
     private fun observeModel() {
