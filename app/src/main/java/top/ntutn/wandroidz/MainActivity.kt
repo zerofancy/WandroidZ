@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEachIndexed
-import androidx.core.view.get
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import top.ntutn.wandroidz.databinding.ActivityMainBinding
 
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainViewpager2.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                binding.bottomNavigationView.menu[position].isChecked = true
+                binding.bottomNavigationView.menu.getItem(position).isChecked = true
                 // 当前不在首页，回到首页
                 backToRecommendCallback.isEnabled = position != 0
             }
