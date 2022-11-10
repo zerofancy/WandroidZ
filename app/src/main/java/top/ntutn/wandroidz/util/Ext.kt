@@ -1,6 +1,11 @@
 package top.ntutn.wandroidz.util
 
 import android.content.res.Resources
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import top.ntutn.wandroidz.account.data.CookiesInterceptor
 
 val Int.dp: Int
     get() {
@@ -25,3 +30,19 @@ val Float.spFloat: Float
         val dpValue = this
         return dpValue * Resources.getSystem().displayMetrics.scaledDensity
     }
+
+val okHttpClient: OkHttpClient by lazy {
+    OkHttpClient.Builder()
+        .addInterceptor(CookiesInterceptor())
+        .build()
+}
+
+inline fun <reified T> wanAndroidApi(): T {
+    val contentType = MediaType.get("application/json")
+    val retrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl("https://www.wanandroid.com/")
+        .addConverterFactory(JsonUtil.json.asConverterFactory(contentType))
+        .build()
+    return retrofit.create(T::class.java)
+}

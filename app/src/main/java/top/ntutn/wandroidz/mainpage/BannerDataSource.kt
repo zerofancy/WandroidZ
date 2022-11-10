@@ -7,6 +7,7 @@ import timber.log.Timber
 import top.ntutn.wandroidz.api.HomePageApi
 import top.ntutn.wandroidz.model.BannerDataModel
 import top.ntutn.wandroidz.model.BannerDataModelList
+import top.ntutn.wandroidz.util.wanAndroidApi
 
 /**
  * Banner
@@ -24,7 +25,7 @@ class BannerDataSource {
     }
 
     private val api by lazy(LazyThreadSafetyMode.NONE) {
-        HomePageApi.get()
+        wanAndroidApi<HomePageApi>()
     }
 
     suspend fun getBannerData(): List<BannerDataModel> = withContext(Dispatchers.IO) {

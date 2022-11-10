@@ -7,6 +7,7 @@ import timber.log.Timber
 import top.ntutn.wandroidz.api.HomePageApi
 import top.ntutn.wandroidz.model.ArticleDataModel
 import top.ntutn.wandroidz.model.ArticleDataModelList
+import top.ntutn.wandroidz.util.wanAndroidApi
 
 /**
  * 置顶文章
@@ -24,7 +25,7 @@ class TopArticleDataSource {
     }
 
     private val api by lazy(LazyThreadSafetyMode.NONE) {
-        HomePageApi.get()
+        wanAndroidApi<HomePageApi>()
     }
 
     suspend fun load(): List<ArticleDataModel> = withContext(Dispatchers.IO) {

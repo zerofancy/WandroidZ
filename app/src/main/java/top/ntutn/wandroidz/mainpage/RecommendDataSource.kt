@@ -5,11 +5,12 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import top.ntutn.wandroidz.api.HomePageApi
 import top.ntutn.wandroidz.model.ArticleDataModel
+import top.ntutn.wandroidz.util.wanAndroidApi
 
 class RecommendDataSource {
     suspend fun load(currentPage: Int): List<ArticleDataModel> = withContext(Dispatchers.IO) {
         val result = kotlin.runCatching {
-            HomePageApi.get().getRecommendList(currentPage)
+            wanAndroidApi<HomePageApi>().getRecommendList(currentPage)
         }.onFailure {
             Timber.e(it, "fetch recommend data failed, page=%d", currentPage)
         }.getOrNull()

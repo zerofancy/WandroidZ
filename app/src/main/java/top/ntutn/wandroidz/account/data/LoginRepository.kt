@@ -1,5 +1,7 @@
 package top.ntutn.wandroidz.account.data
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import top.ntutn.wandroidz.account.data.model.LoggedInUser
 
 /**
@@ -27,7 +29,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    suspend fun login(username: String, password: String): Result<LoggedInUser> {
         // handle login
         val result = dataSource.login(username, password)
 
@@ -38,8 +40,8 @@ class LoginRepository(val dataSource: LoginDataSource) {
         return result
     }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
-        this.user = loggedInUser
+    private suspend fun setLoggedInUser(loggedInUser: LoggedInUser) = withContext(Dispatchers.Main) {
+        this@LoginRepository.user = loggedInUser
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
     }
