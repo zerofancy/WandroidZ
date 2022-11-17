@@ -2,17 +2,16 @@ package top.ntutn.wandroidz.me
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import top.ntutn.wandroidz.databinding.ItemNormalClickableBinding
 import top.ntutn.wandroidz.me.data.ClickableItemData
 import top.ntutn.wandroidz.me.data.IMeListItemData
 
-class NormalClickableItemViewHolder(val parent: ViewGroup): MeAdapter.ViewHolder(FrameLayout(parent.context)) {
+class NormalClickableItemViewHolder(val parent: ViewGroup): MeAdapter.ViewHolder(parent.context) {
     val binding: ItemNormalClickableBinding
 
     init {
         val inflater = LayoutInflater.from(parent.context)
-        binding = ItemNormalClickableBinding.inflate(inflater, itemView as FrameLayout, true)
+        binding = ItemNormalClickableBinding.inflate(inflater, contentContainer, true)
     }
 
     override fun onBind(data: IMeListItemData) {
