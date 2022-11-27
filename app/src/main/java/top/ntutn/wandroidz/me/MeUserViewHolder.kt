@@ -25,7 +25,7 @@ class MeUserViewHolder(val parent: ViewGroup): MeAdapter.ViewHolder(parent.conte
         }
         val email = data.userInfoBean?.userInfo?.email ?: ""
         val emailHash = DigestUtils.md5Hex(email)
-        val url = "https://www.gravatar.com/avatar/$emailHash"
+        val url = "https://sdn.geekzu.org/avatar/$emailHash"
 
         binding.nickname.text = data.userInfoBean?.userInfo?.nickname ?: "未登录"
         binding.root.setOnClickListener {
