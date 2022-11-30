@@ -1,18 +1,21 @@
 package top.ntutn.wandroidz.web
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
@@ -118,6 +121,12 @@ class WebViewActivity: AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_copy -> {
+            val manager = getSystemService<ClipboardManager>()
+            manager?.setPrimaryClip(ClipData.newPlainText("WanAndroid", binding.webview.url))
+            Snackbar.make(binding.root, "已复制", Snackbar.LENGTH_SHORT).show()
+            true
+        }
         R.id.action_share -> {
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.type = "text/plain"
