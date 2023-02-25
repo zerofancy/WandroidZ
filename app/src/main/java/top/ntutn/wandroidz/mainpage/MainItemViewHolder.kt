@@ -45,7 +45,7 @@ class MainItemViewHolder(private val binding: ItemMainItemBinding): RecommendLis
                 Toast.makeText(binding.root.context, "打开链接失败", Toast.LENGTH_SHORT).show()
             }
         }
-        val url = AvatarHelper.getAvatarUrl(data.author?.takeIf { it.isNotBlank() } ?: data.shareUser, data.link)
+        val url = AvatarHelper.getAvatarUrl(data.author?.takeIf { it.isNotBlank() }, data.link)
         Glide.with(binding.icon)
             .load(url)
             .error(R.mipmap.ic_launcher)
