@@ -39,7 +39,7 @@ class MainItemViewHolder(private val binding: ItemMainItemBinding): RecommendLis
             kotlin.runCatching {
                 WebViewActivity.showArticle(
                     it.context,
-                    data.author?.takeIf { it.isNotBlank() } ?: data.shareUser,
+                    data.author?.takeIf { it.isNotBlank() },
                     data.link)
             }.onFailure {
                 Toast.makeText(binding.root.context, "打开链接失败", Toast.LENGTH_SHORT).show()

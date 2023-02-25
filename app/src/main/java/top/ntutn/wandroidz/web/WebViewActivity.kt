@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -98,9 +99,28 @@ class WebViewActivity: AppCompatActivity() {
 
                 author = null
             }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                Timber.e(error.toString())
+                super.onReceivedError(view, request, error)
+            }
+
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+                Timber.e(error.toString())
+                super.onReceivedSslError(view, handler, error)
+            }
         }
         webView.settings.apply {
             javaScriptEnabled = true
+            domStorageEnabled = true
         }
 
         linkUrl?.let {
