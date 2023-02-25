@@ -24,7 +24,9 @@ import timber.log.Timber
 import top.ntutn.wandroidz.R
 import top.ntutn.wandroidz.databinding.ActivityWebviewBinding
 import top.ntutn.wandroidz.smartavatar.AvatarHelper
+import top.ntutn.wandroidz.smartavatar.CSDNSniffer
 import top.ntutn.wandroidz.smartavatar.JuejinSniffer
+import top.ntutn.wandroidz.smartavatar.WeChatSniffer
 
 class WebViewActivity: AppCompatActivity() {
     companion object {
@@ -49,7 +51,7 @@ class WebViewActivity: AppCompatActivity() {
     private lateinit var webView: WebView
     private var author: String? = null
     private val sniffer by lazy {
-        JuejinSniffer(null)
+        CSDNSniffer(WeChatSniffer(JuejinSniffer(null)))
     }
     private val blocker = BuiltinURLBlocker()
 
