@@ -15,6 +15,7 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import timber.log.Timber
+import top.ntutn.wandroidz.BuildConfig
 import top.ntutn.wandroidz.R
 import top.ntutn.wandroidz.databinding.ActivityWebviewBinding
 import top.ntutn.wandroidz.smartavatar.AvatarHelper
@@ -30,6 +32,7 @@ import top.ntutn.wandroidz.smartavatar.CSDNSniffer
 import top.ntutn.wandroidz.smartavatar.JuejinSniffer
 import top.ntutn.wandroidz.smartavatar.WeChatSniffer
 import java.io.File
+import java.net.URLConnection
 import java.util.UUID
 
 class WebViewActivity: AppCompatActivity() {
@@ -176,7 +179,16 @@ class WebViewActivity: AppCompatActivity() {
                 File(filesDir, "archive").mkdirs()
                 val archiveFile = File(filesDir, "archive/${UUID.randomUUID()}.mht")
                 binding.webview.saveWebArchive(archiveFile.absolutePath, false) { value ->
-                    Toast.makeText(this@WebViewActivity, value ?: return@saveWebArchive, Toast.LENGTH_SHORT).show()
+                    if (value == null) {
+                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                        return@saveWebArchive
+                    }
+                    val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", archiveFile)
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "*/*"
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                    //shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    startActivity(Intent.createChooser(shareIntent, "Send"))
                 }
             }
             true
