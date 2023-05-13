@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
@@ -14,19 +15,25 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import timber.log.Timber
+import top.ntutn.wandroidz.BuildConfig
 import top.ntutn.wandroidz.R
 import top.ntutn.wandroidz.databinding.ActivityWebviewBinding
 import top.ntutn.wandroidz.smartavatar.AvatarHelper
 import top.ntutn.wandroidz.smartavatar.CSDNSniffer
 import top.ntutn.wandroidz.smartavatar.JuejinSniffer
 import top.ntutn.wandroidz.smartavatar.WeChatSniffer
+import java.io.File
+import java.net.URLConnection
+import java.util.UUID
 
 class WebViewActivity: AppCompatActivity() {
     companion object {
@@ -54,6 +61,7 @@ class WebViewActivity: AppCompatActivity() {
         CSDNSniffer(WeChatSniffer(JuejinSniffer(null)))
     }
     private val blocker = BuiltinURLBlocker()
+    private var loadingFinished = false
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,9 +83,17 @@ class WebViewActivity: AppCompatActivity() {
         author = intent.getStringExtra(KEY_AUTHOR)
 
         webView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                loadingFinished = false
+            }
+
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view ?: return, url)
                 Timber.d("页面 %s 加载完成", url)
+
+                loadingFinished = true
+
                 binding.myToolbar.title = view.title
                 val user = author ?: return
                 if (user.isBlank()) {
@@ -154,6 +170,27 @@ class WebViewActivity: AppCompatActivity() {
             shareIntent.type = "text/plain"
             shareIntent.putExtra(Intent.EXTRA_TEXT, binding.webview.url)
             startActivity(Intent.createChooser(shareIntent, "分享到..."))
+            true
+        }
+        R.id.action_save -> { // 能保存，但好像没啥用
+            if (!loadingFinished) {
+                Toast.makeText(this, "页面未加载完毕，无法保存", Toast.LENGTH_SHORT).show()
+            } else {
+                File(filesDir, "archive").mkdirs()
+                val archiveFile = File(filesDir, "archive/${UUID.randomUUID()}.mht")
+                binding.webview.saveWebArchive(archiveFile.absolutePath, false) { value ->
+                    if (value == null) {
+                        Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
+                        return@saveWebArchive
+                    }
+                    val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", archiveFile)
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "*/*"
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                    //shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    startActivity(Intent.createChooser(shareIntent, "Send"))
+                }
+            }
             true
         }
         else -> false
