@@ -60,8 +60,11 @@ class WebViewActivity: AppCompatActivity() {
     private val sniffer by lazy {
         CSDNSniffer(WeChatSniffer(JuejinSniffer(null)))
     }
+    private val articleArchivers = listOf(JuejinArticleArchiver())
     private val blocker = BuiltinURLBlocker()
     private var loadingFinished = false
+
+    private var currentArticleFile: File? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,22 +98,31 @@ class WebViewActivity: AppCompatActivity() {
                 loadingFinished = true
 
                 binding.myToolbar.title = view.title
-                val user = author ?: return
-                if (user.isBlank()) {
-                    return
-                }
-                if (Uri.parse(url ?: return).path != Uri.parse(linkUrl ?: return).path) {
-                    return
-                }
-                // 查找页面加载头像
+
+                url ?: return
 
                 view.evaluateJavascript("new XMLSerializer().serializeToString(document)") {
+                    // 查找页面加载头像
                     lifecycleScope.launch(Dispatchers.Default) {
+                        val user = author ?: return@launch
+                        if (user.isBlank()) {
+                            return@launch
+                        }
+                        if (Uri.parse(url).path != Uri.parse(linkUrl ?: return@launch).path) {
+                            return@launch
+                        }
                         val html = StringEscapeUtils.unescapeJava(it)
                         val avatarUrl = sniffer.sniff(url, html)
                         if (!avatarUrl.isNullOrBlank()) {
                             Timber.d("用户 %s 的头像解析成功 %s", user, avatarUrl)
                             AvatarHelper.saveAvatarUrl(user, avatarUrl)
+                        }
+                    }
+                    // 生成可导出文档
+                    lifecycleScope.launch(Dispatchers.Default) {
+                        val html = StringEscapeUtils.unescapeJava(it)
+                        articleArchivers.firstOrNull { it.match(url) }?.let {
+                            currentArticleFile = it.handle(url, html)
                         }
                     }
                 }
@@ -173,27 +185,37 @@ class WebViewActivity: AppCompatActivity() {
             true
         }
         R.id.action_save -> { // 能保存，但好像没啥用
+            File(filesDir, "archive").mkdirs()
             if (!loadingFinished) {
                 Toast.makeText(this, "页面未加载完毕，无法保存", Toast.LENGTH_SHORT).show()
-            } else {
-                File(filesDir, "archive").mkdirs()
+            } else if (currentArticleFile != null) {
+                currentArticleFile?.let {
+                    val archiveFile = File(filesDir, "archive/${UUID.randomUUID()}.${it.extension}")
+                    it.copyTo(archiveFile)
+                    shareFile(archiveFile)
+                }
+            } else{
                 val archiveFile = File(filesDir, "archive/${UUID.randomUUID()}.mht")
                 binding.webview.saveWebArchive(archiveFile.absolutePath, false) { value ->
                     if (value == null) {
                         Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
                         return@saveWebArchive
                     }
-                    val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", archiveFile)
-                    val shareIntent = Intent(Intent.ACTION_SEND)
-                    shareIntent.type = "*/*"
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                    //shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    startActivity(Intent.createChooser(shareIntent, "Send"))
+                    shareFile(archiveFile)
                 }
             }
             true
         }
         else -> false
+    }
+
+    private fun shareFile(archiveFile: File) {
+        val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", archiveFile)
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "*/*"
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+        //shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        startActivity(Intent.createChooser(shareIntent, "Send"))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
