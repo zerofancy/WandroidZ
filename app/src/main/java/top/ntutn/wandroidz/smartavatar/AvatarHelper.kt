@@ -17,16 +17,14 @@ object AvatarHelper {
         return stored ?: getFaviconUrl(link)
     }
 
+    /**
+     * 获取图标服务来自 https://github.com/seadfeng/favicons-proxy
+     */
     private fun getFaviconUrl(url: String): String {
         val uri = Uri.parse(url)
-        if (uri.host?.contains("wanandroid.com") == true) {
-            // 没错，WanAndroid是少数不把favicon放在根目录的网站
-            return "https://wanandroid.com/resources/image/favicon.ico"
-        }
-
-        return uri.buildUpon()
-            .path("/favicon.ico")
-            .build()
+        return Uri.parse("https://favicons.seadfeng.workers.dev/juejin.cn.ico")
+            .buildUpon()
+            .path(uri.host + ".ico")
             .toString()
     }
 
