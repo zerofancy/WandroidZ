@@ -5,10 +5,12 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.*
@@ -93,6 +95,10 @@ class WebViewActivity: AppCompatActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view ?: return, url)
+                val uri = Uri.parse(url)
+                if (uri.scheme == "file") {
+                    return
+                }
                 Timber.d("页面 %s 加载完成", url)
 
                 loadingFinished = true
@@ -128,6 +134,17 @@ class WebViewActivity: AppCompatActivity() {
                 }
 
                 author = null
+
+                // http://sergiochan.github.io/2016/10/21/%E5%A6%82%E4%BD%95%E5%9C%A8-WKWebView-%E4%B8%AD%E5%AE%9E%E7%8E%B0-Safari-%E5%8E%9F%E7%94%9F%E7%9A%84%E9%98%85%E8%AF%BB%E6%A8%A1%E5%BC%8F/
+                // 这段js来自逆向的safari浏览器，有版权问题！
+                val articleChecker = assets.open("safari-reader-check.js").bufferedReader().readText()
+                view.evaluateJavascript(articleChecker) {
+                    view.evaluateJavascript("ReaderArticleFinderJS.isReaderModeAvailable()") {
+                        view.evaluateJavascript("document.getElementsByTagName('body')[0].innerHTML = ReaderArticleFinderJS.articleNode().innerHTML") {
+                            Toast.makeText(view.context, "尝试使用阅读模式", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
 
             override fun onReceivedError(
